@@ -1,11 +1,11 @@
 {
-  "name": "chrome-extension-boilerplate-react",
-  "version": "3.0.0",
-  "description": "A chrome extension boilerplate built with React 17 and Webpack 4",
+  "name": "meet-link-creator",
+  "version": "0.0.1",
+  "description": "chrome-extension-for-creating-google-meet-video-link",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
+    "url": "https://github.com/naveenkash/meet-link-creator.git"
   },
   "scripts": {
     "build": "node utils/build.js",
