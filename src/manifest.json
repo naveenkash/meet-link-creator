@@ -13,7 +13,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "matches": ["<all_urls>"],
       "js": ["contentScript.bundle.js"],
       "css": ["content.styles.css"]
     }
@@ -26,12 +26,26 @@
       "https://www.googleapis.com/auth/calendar.events"
     ]
   },
+  "commands": {
+    "create": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "Open attendee modal to add attendees"
+    },
+    "closeAttendeesModal": {
+      "suggested_key": {
+        "default": "Alt+A"
+      },
+      "description": "Closes add attendees modal"
+    }
+  },
   "web_accessible_resources": [
     "content.styles.css",
     "icon-128.png",
     "icon-34.png"
   ],
-  "permissions": ["identity", "storage"],
+  "permissions": ["identity", "storage", "tabs", "activeTab"],
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

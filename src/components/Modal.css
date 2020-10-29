@@ -1,0 +1,74 @@
+.meet-modal-wrapper {
+  width: 400px;
+  height: 400px;
+  padding: 8px;
+  -webkit-box-shadow: -1px 2px 25px -6px rgba(115, 115, 115, 1);
+  -moz-box-shadow: -1px 2px 25px -6px rgba(115, 115, 115, 1);
+  box-shadow: -1px 2px 25px -6px rgba(115, 115, 115, 1);
+  background-color: white;
+  border-radius: 5px;
+  overflow-y: scroll;
+}
+.meet-modal {
+  display: grid;
+  height: 100%;
+}
+.meet-attendee {
+  width: 100%;
+  text-align: center;
+  height: 100%;
+}
+.meet-attendee p {
+  margin-bottom: 15px;
+}
+#modal-head {
+  font-weight: lighter;
+  margin: 10px auto 20px auto;
+}
+.attendee {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.attendee input {
+  padding: 8px 12px;
+  width: 75%;
+  outline: none;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.meet-modal button {
+  width: 25%;
+  padding: 8px 12px;
+  outline: none;
+  border: 1px solid black;
+  background-color: #118cff;
+  color: white;
+  border-radius: 5px;
+  margin-left: 5px;
+}
+.create-meet-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+.meet-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.meet-link {
+  display: flex;
+  justify-content: center;
+}
+.meet-link a {
+  text-decoration: underline;
+}
+.meet-link a:hover {
+  color: #118cff;
+}

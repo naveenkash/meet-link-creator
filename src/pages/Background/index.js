@@ -6,7 +6,8 @@ let user_signin_in = false;
 const storage = chrome.storage,
   identity = chrome.identity,
   runtime = chrome.runtime,
-  browserAction = chrome.browserAction;
+  browserAction = chrome.browserAction,
+  commands = chrome.commands;
 
 /**
  * Get initial auth state
@@ -33,6 +34,58 @@ runtime.onMessage.addListener((request, sender, sendResponse) => {
       handleSignoutClick(sendResponse);
     }
   }
+  return true;
+});
+
+/**
+ * Listen to keyboard events
+ */
+commands.onCommand.addListener(function (command) {
+  switch (command) {
+    case 'create':
+      chrome.tabs.query({ active: true }, (tabs) => {
+        let tabId = tabs[0].id;
+        chrome.tabs.sendMessage(
+          tabId,
+          {
+            message: 'openAttendeesModal',
+          },
+          async function (response) {
+            if (runtime.lastError) {
+              alert(runtime.lastError.message);
+              return;
+            }
+            identity.getAuthToken({}, async function (token) {
+              if (runtime.lastError) {
+                alert(runtime.lastError.message);
+              } else {
+                if (token) {
+                  // Create google meet event after attendees are added
+                  try {
+                    const DATA = await createEvent(response, token);
+                    console.log(DATA);
+                    // Show meet info after meeting is created
+                  } catch (error) {
+                    alert(error.message);
+                  }
+                } else {
+                  // Not logged in
+                }
+              }
+            });
+          }
+        );
+      });
+      break;
+    case 'closeAttendeesModal':
+      chrome.tabs.query({ active: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { message: 'closeAttendeesModal' });
+      });
+      break;
+    default:
+      break;
+  }
+
   return true;
 });
 
@@ -145,4 +198,54 @@ function changeAuthPopUpToSignedIn() {
 
 function changeSignedinPopUpToAuth() {
   browserAction.setPopup({ popup: './auth.html' });
+}
+
+async function createEvent(attendees, token) {
+  let endAt = 1000 * 60 * 10;
+  var event = {
+    summary: 'Video Conference',
+    description: 'Event Created from Chrome Extension',
+    start: {
+      dateTime: new Date().toISOString(),
+      timeZone: 'Asia/Kolkata',
+    },
+    end: {
+      dateTime: new Date(Date.now() + endAt).toISOString(),
+      timeZone: 'Asia/Kolkata',
+    },
+    conferenceData: {
+      createRequest: {
+        requestId: Math.random().toString(32).substr(2),
+        conferenceSolutionKey: {
+          type: 'hangoutsMeet',
+        },
+      },
+    },
+    attendees: attendees || [],
+    reminders: {
+      useDefault: false,
+      overrides: [
+        { method: 'email', minutes: 24 * 60 },
+        { method: 'popup', minutes: 10 },
+      ],
+    },
+  };
+  try {
+    const RESP = await fetch(
+      'https://www.googleapis.com/calendar/v3/calendars/primary/events/?conferenceDataVersion=1',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          accept: 'application/json',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(event),
+      }
+    );
+    const DATA = await RESP.json();
+    return DATA;
+  } catch (error) {
+    throw error;
+  }
 }
