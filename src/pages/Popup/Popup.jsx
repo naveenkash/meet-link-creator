@@ -21,7 +21,20 @@ function signout(setSignOutLoad) {
       }
     }
     window.close();
-    return true;
+  });
+
+  runtime.sendMessage({ message: 'close' }, function (res) {
+    if (runtime.lastError) {
+    }
+    window.close();
+  });
+}
+
+function createManually() {
+  runtime.sendMessage({ message: 'create' }, function (res) {
+    if (runtime.lastError) {
+    }
+    window.close();
   });
 }
 
@@ -51,13 +64,18 @@ function Popup() {
           <p>Hi {useName}</p>
         </div>
       </div>
-      <div
-        className="btn-wrapper"
-        onClick={() => {
-          signout(setSignOutLoad);
-        }}
-      >
-        <Button load={useSignOutLoad} text={'Sign Out'} />
+      <div className="btn-container">
+        <div
+          className="btn-wrapper"
+          onClick={() => {
+            signout(setSignOutLoad);
+          }}
+        >
+          <Button load={useSignOutLoad} text={'Sign Out'} />
+        </div>
+        <div onClick={createManually}>
+          <Button load={false} text={'Create'} />
+        </div>
       </div>
     </div>
   );

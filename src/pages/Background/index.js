@@ -33,6 +33,10 @@ runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (user_signin_in) {
       handleSignoutClick(sendResponse);
     }
+  } else if (request.message === 'create') {
+    createEventListner();
+  } else if (request.message === 'close') {
+    closeModalListner();
   }
   return true;
 });
@@ -43,57 +47,10 @@ runtime.onMessage.addListener((request, sender, sendResponse) => {
 commands.onCommand.addListener(function (command) {
   switch (command) {
     case 'create':
-      identity.getAuthToken({}, async function (token) {
-        if (runtime.lastError) {
-          alert(runtime.lastError.message);
-        } else {
-          if (token) {
-            chrome.tabs.query({ active: true }, (tabs) => {
-              let tabId = tabs[0].id;
-              chrome.tabs.sendMessage(
-                tabId,
-                {
-                  message: 'openAttendeesModal',
-                },
-                async function (response) {
-                  if (runtime.lastError) {
-                    alert(runtime.lastError.message);
-                    return;
-                  }
-                  // Create google meet event after attendees are added
-                  try {
-                    const DATA = await createEvent(response, token);
-                    // Show meet info after meeting is created
-                    chrome.tabs.sendMessage(
-                      tabId,
-                      {
-                        message: 'openMeetInfoModal',
-                        hangoutLink: DATA.hangoutLink,
-                      },
-                      async function (response) {
-                        if (runtime.lastError) {
-                          alert(runtime.lastError.message, 'create');
-                          return;
-                        }
-                      }
-                    );
-                  } catch (error) {
-                    alert(error.message);
-                  }
-                }
-              );
-            });
-          } else {
-            alert('Please Login Before Creating Meeting');
-            // Not logged in
-          }
-        }
-      });
+      createEventListner();
       break;
     case 'close':
-      chrome.tabs.query({ active: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { message: 'closeModal' });
-      });
+      closeModalListner();
       break;
     default:
       break;
@@ -261,4 +218,59 @@ async function createEvent(attendees, token) {
   } catch (error) {
     throw error;
   }
+}
+
+function createEventListner() {
+  identity.getAuthToken({}, async function (token) {
+    if (runtime.lastError) {
+      alert(runtime.lastError.message);
+    } else {
+      if (token) {
+        chrome.tabs.query({ active: true }, (tabs) => {
+          let tabId = tabs[0].id;
+          chrome.tabs.sendMessage(
+            tabId,
+            {
+              message: 'openAttendeesModal',
+            },
+            async function (response) {
+              if (runtime.lastError) {
+                alert(runtime.lastError.message);
+                return;
+              }
+              // Create google meet event after attendees are added
+              try {
+                const DATA = await createEvent(response, token);
+                // Show meet info after meeting is created
+                chrome.tabs.sendMessage(
+                  tabId,
+                  {
+                    message: 'openMeetInfoModal',
+                    hangoutLink: DATA.hangoutLink,
+                  },
+                  async function (response) {
+                    if (runtime.lastError) {
+                      alert(runtime.lastError.message, 'create');
+                      return;
+                    }
+                  }
+                );
+              } catch (error) {
+                alert(error.message);
+              }
+            }
+          );
+        });
+      } else {
+        alert('Please Login Before Creating Meeting');
+        // Not logged in
+      }
+    }
+  });
+}
+
+function closeModalListner() {
+  chrome.tabs.query({ active: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, { message: 'closeModal' });
+  });
 }
