@@ -33,11 +33,11 @@
       },
       "description": "Open attendee modal to add attendees"
     },
-    "closeAttendeesModal": {
+    "close": {
       "suggested_key": {
         "default": "Alt+A"
       },
-      "description": "Closes add attendees modal"
+      "description": "Closes modal"
     }
   },
   "web_accessible_resources": [
