@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Modal.css';
-
+import Button from '../components/Button';
 function AddAttendee(props) {
   const [currentAttendee, setCurrentAttendee] = useState('');
   const [useAttendees, setAttendees] = useState([]);
@@ -8,8 +8,6 @@ function AddAttendee(props) {
 
   const create = () => {
     props.attendees(useAttendees);
-    setCurrentAttendee('');
-    setAttendees([]);
   };
 
   const keyDownHandler = (event) => {
@@ -78,7 +76,9 @@ function AddAttendee(props) {
               placeholder="Attendee email"
               onChange={(e) => setCurrentAttendee(e.target.value)}
             />
-            <button onClick={addNewAttendee}>Add</button>
+            <button className="attendee-btn" onClick={addNewAttendee}>
+              Add
+            </button>
           </div>
           <div>
             {useAttendees.map((item, index) => (
@@ -92,7 +92,7 @@ function AddAttendee(props) {
                   }}
                 />
                 <button
-                  className="remove-attendee"
+                  className="attendee-btn"
                   onClick={() => {
                     removeAttendee(index);
                   }}
@@ -104,9 +104,9 @@ function AddAttendee(props) {
           </div>
         </div>
         <div className="create-meet-wrapper">
-          <button className="create-meet" onClick={createManually}>
-            Create
-          </button>
+          <div className="create-meet" onClick={createManually}>
+            <Button load={props.creatingEvent} text={'Create'} />
+          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import '../global.css';
 
 function Button({ load, text }) {
   return (
-    <button className="btn">
+    <button className="create-meet-btn">
       {load ? (
         <div className="lds-ring center">
           <div></div>

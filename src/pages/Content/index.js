@@ -21,7 +21,7 @@ runtime.onMessage.addListener(function (request, sender, sendResponse) {
     case 'openAttendeesModal':
       // Open modal to add attendees
       if (!addAttendeeModalOpened) {
-        showAddAttendeeModal(sendResponse);
+        showAddAttendeeModal(sendResponse, false);
       }
       addAttendeeModalOpened = true;
       break;
@@ -47,7 +47,7 @@ runtime.onMessage.addListener(function (request, sender, sendResponse) {
   return true;
 });
 
-function showAddAttendeeModal(cb) {
+function showAddAttendeeModal(cb, creatingEvent) {
   const modal = document.createElement('div');
   modal.setAttribute('id', 'meet-modal-container');
   modal.setAttribute('class', 'modal-center');
@@ -56,12 +56,18 @@ function showAddAttendeeModal(cb) {
       attendees={(data) => {
         addAttendees(data, cb);
       }}
+      creatingEvent={creatingEvent}
     />,
     document.body.appendChild(modal)
   );
 }
 
 function addAttendees(data, cb) {
+  let attendeeModal = document.querySelector('#meet-modal-container');
+  if (attendeeModal) {
+    closeModal(attendeeModal);
+    showAddAttendeeModal(cb, true);
+  }
   cb(data);
 }
 

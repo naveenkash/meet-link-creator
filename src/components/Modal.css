@@ -39,7 +39,7 @@
   border: 1px solid black;
   border-radius: 5px;
 }
-.meet-modal button {
+.attendee-btn {
   width: 25%;
   padding: 8px 12px;
   outline: none;
@@ -56,6 +56,9 @@
   align-items: flex-end;
   justify-content: center;
   margin-bottom: 15px;
+}
+.create-meet{
+  height: 35px;
 }
 .meet-info {
   display: flex;
