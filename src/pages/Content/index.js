@@ -1,6 +1,6 @@
 import AddAttendee from '../../components/AddAttendee';
 import MeetVideoInfo from '../../components/MeetVideoInfo';
-import React from 'react';
+import React, { useState } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
 const runtime = chrome.runtime;
@@ -21,7 +21,7 @@ runtime.onMessage.addListener(function (request, sender, sendResponse) {
     case 'openAttendeesModal':
       // Open modal to add attendees
       if (!addAttendeeModalOpened) {
-        showAddAttendeeModal(sendResponse, false);
+        showAddAttendeeModal(sendResponse);
       }
       addAttendeeModalOpened = true;
       break;
@@ -47,27 +47,26 @@ runtime.onMessage.addListener(function (request, sender, sendResponse) {
   return true;
 });
 
-function showAddAttendeeModal(cb, creatingEvent) {
+function showAddAttendeeModal(cb) {
+  const AddAttendeeWrapper = () => {
+    let [creatingEvent, setCreatingEvent] = useState(false);
+    return (
+      <AddAttendee
+        attendees={(data) => {
+          setCreatingEvent(true);
+          addAttendees(data, cb);
+        }}
+        creatingEvent={creatingEvent}
+      />
+    );
+  };
   const modal = document.createElement('div');
   modal.setAttribute('id', 'meet-modal-container');
   modal.setAttribute('class', 'modal-center');
-  render(
-    <AddAttendee
-      attendees={(data) => {
-        addAttendees(data, cb);
-      }}
-      creatingEvent={creatingEvent}
-    />,
-    document.body.appendChild(modal)
-  );
+  render(<AddAttendeeWrapper />, document.body.appendChild(modal));
 }
 
 function addAttendees(data, cb) {
-  let attendeeModal = document.querySelector('#meet-modal-container');
-  if (attendeeModal) {
-    closeModal(attendeeModal);
-    showAddAttendeeModal(cb, true);
-  }
   cb(data);
 }
 
